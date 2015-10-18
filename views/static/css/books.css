@@ -1,0 +1,11 @@
+.hor-margin {
+	margin: 0 10px;
+}
+
+.force-width-80 {
+	width: 80% !important;
+}
+
+.align-center {
+	text-align: center;
+}
