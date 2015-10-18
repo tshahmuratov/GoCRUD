@@ -41,10 +41,10 @@ func main() {
 	s2 := []string{"user=", User, " password=", Pass, " dbname=", DBName, " sslmode=disable"};
 	orm.RegisterDriver("postgres", orm.DR_Postgres)
     orm.RegisterDataBase("default", "postgres", strings.Join(s2, ""))
-    beego.SetStaticPath("/images","views/static/images")
-	beego.SetStaticPath("/css","views/static/css")
-	beego.SetStaticPath("/js","views/static/js")
-    beego.SetStaticPath("/fonts","views/static/fonts")
+    beego.SetStaticPath("/images","static/images")
+	beego.SetStaticPath("/css","static/css")
+	beego.SetStaticPath("/js","static/js")
+    beego.SetStaticPath("/fonts","static/fonts")
     beego.EnableAdmin = true
     orm.RunCommand()
 	beego.Run()
