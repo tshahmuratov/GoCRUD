@@ -1,14 +1,23 @@
 angular.module('bookApp',['ui.router','ngResource','bookApp.controllers','bookApp.services']);
 
 angular.module('bookApp').config(function($stateProvider,$httpProvider){
-    $stateProvider.state('books',{
-        url:'/books',
+    $stateProvider.state('libraries',{
+        url:'/libraries',
         templateUrl:'partials/books.html',
-        controller:'BookListController'
-    }).state('viewBook',{
-       url:'/books/:id/view',
-       templateUrl:'partials/book-view.html',
-       controller:'BookViewController'
+        controller:'LibraryListController'
+    }).state('newLibrary',{
+        url:'/libraries/new',
+        templateUrl:'partials/library-add.html',
+        controller:'LibraryCreateController'
+    }).state('books',{
+        url:'/books',
+        templateUrl:'partials/books-list.html',
+        controller:'BookListController',
+        params: { 
+            libId: {
+            squash: false,
+            },
+        }
     }).state('newBook',{
         url:'/books/new',
         templateUrl:'partials/book-add.html',
@@ -19,5 +28,5 @@ angular.module('bookApp').config(function($stateProvider,$httpProvider){
         controller:'BookEditController'
     });
 }).run(function($state){
-   $state.go('books');
+   $state.go('libraries');
 });

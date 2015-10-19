@@ -8,7 +8,6 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/goinggo/tracelog"
 	"encoding/json"
-	"fmt"
 )
 
 //** TYPES
@@ -25,8 +24,8 @@ type Library struct {
 
 type Book_Library struct {
 	Id				int64
-	Book_id			*Book 		`orm:"rel(one)"`
-	Library_id		*Library 	`orm:"rel(one)"`
+	Book_id			int64 		
+	Library_id		int64 
 }
 
 func init() {
@@ -34,19 +33,7 @@ func init() {
 	orm.Debug = true
 }
 
-func GetLibraries() (*[]Library, int64, error) {
-    var rows []Library
-	o := orm.NewOrm()
-	num, err := o.Raw(` 
-		SELECT id, name 
-		FROM library`).QueryRows(&rows)
-	if err != nil {
-		tracelog.Errorf(err, "main", "model.GetBooks", "Failed to getbooks")
-	}
-    return &rows, num, err
-}
-
-func GetBooks(libraryId int64) (*[]Book, error) {
+func GetBooksInLibrary(libraryId int64) (*[]Book, error) {
     var rows []Book
 	o := orm.NewOrm()
 	_, err := o.Raw(`
@@ -59,6 +46,17 @@ func GetBooks(libraryId int64) (*[]Book, error) {
 		tracelog.Errorf(err, "main", "model.GetBooks", "Failed to getbooks")
 	}
     return &rows, err
+}
+
+func AddBookInLibrary(libraryId int64, bookId int64) (bool) {
+	o := orm.NewOrm()
+	_, err := o.Raw(`
+		INSERT INTO book_library(book_id, library_id) VALUES(?, ?)`, bookId, libraryId).Exec()
+	if (err != nil) {
+		tracelog.Errorf(err, "main", "model.AddBookInLibrary", "Failed to insert book")
+		return false
+	}
+	return true;
 }
 
 func GetAllBooks() (*[]Book, error) {
@@ -97,13 +95,9 @@ func AddBook(jsonStr []byte) (bool) {
 		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert json")
 		return false
 	}
-	num, err := o.Insert(&book);
+	_, err = o.Insert(&book);
 	if (err != nil) {
 		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert book")
-		return false
-	}
-	if (num != 1) {
-		tracelog.Errorf(err, "main", "model.AddBook", fmt.Sprint("Failed to insert book num = ",num))
 		return false
 	}
 	return true;
@@ -117,13 +111,9 @@ func UpdateBook(jsonStr []byte) (bool) {
 		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to parse json")
 		return false
 	}
-	num, err := o.Update(&book);
+	_, err = o.Update(&book);
 	if (err != nil) {
 		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to update book")
-		return false
-	}
-	if (num != 1) {
-		tracelog.Errorf(err, "main", "model.UpdateBook", fmt.Sprint("Failed to update book num = ",num))
 		return false
 	}
 	return true;
@@ -131,7 +121,76 @@ func UpdateBook(jsonStr []byte) (bool) {
 
 func DeleteBook(bookId int64) (bool) {
 	o := orm.NewOrm()
-	if _, err := o.Delete(&Book{Id: 1}); err == nil {
+	if _, err := o.Delete(&Book{Id: bookId}); err == nil {
+		tracelog.Errorf(err, "main", "model.DeleteBook", "Failed to delete book")
+		return false
+	}
+	return true
+}
+
+//Libraries
+func GetLibraries() (*[]Library, error) {
+    var rows []Library
+	o := orm.NewOrm()
+	_, err := o.Raw(` 
+		SELECT id, name 
+		FROM library`).QueryRows(&rows)
+	if err != nil {
+		tracelog.Errorf(err, "main", "model.GetBooks", "Failed to getbooks")
+	}
+    return &rows, err
+}
+
+func GetLibrary(libId int64) (*Library, error) {
+    o := orm.NewOrm()
+	lib := Library{Id: libId}
+	err := o.Read(&lib)
+	
+	if err == orm.ErrNoRows {
+		return nil, err;
+	} else if err == orm.ErrMissPK {
+		tracelog.Errorf(err, "main", "model.GetBook", "Failed to get book")
+		return nil, err;
+	} else {
+		return &lib, err
+	}
+}
+
+func AddLibrary(jsonStr []byte) (bool) {
+	o := orm.NewOrm()
+	var lib Library
+	err := json.Unmarshal(jsonStr, &lib)
+   	if (err != nil) {
+		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert json")
+		return false
+	}
+	_, err = o.Insert(&lib);
+	if (err != nil) {
+		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert book")
+		return false
+	}
+	return true;
+}
+
+func UpdateLibrary(jsonStr []byte) (bool) {
+	o := orm.NewOrm()
+	var lib Library
+	err := json.Unmarshal(jsonStr, &lib)
+   	if (err != nil) {
+		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to parse json")
+		return false
+	}
+	_, err = o.Update(&lib);
+	if (err != nil) {
+		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to update book")
+		return false
+	}
+	return true;
+}
+
+func DeleteLibrary(libId int64) (bool) {
+	o := orm.NewOrm()
+	if _, err := o.Delete(&Library{Id: libId}); err == nil {
 		tracelog.Errorf(err, "main", "model.DeleteBook", "Failed to delete book")
 		return false
 	}

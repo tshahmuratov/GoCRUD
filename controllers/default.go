@@ -14,36 +14,8 @@ type MainController struct {
 }
 
 func (c *MainController) Get() {
-	libraries, num, _ := model.GetLibraries()
-	if (num != 0) {
-		books, err := model.GetBooks((*libraries)[0].Id)
-	
-		if (err == orm.ErrNoRows) {
-			tracelog.Errorf(err, "main", "MainController", "No result found.")
-		}
-		c.Data["Libraries"] = libraries
-		c.Data["Books"] = books
-	}
 	c.TplNames = "books.tpl"
 	tracelog.Info("main", "main", "finish")
-}
-
-type BooksInLibraryContorller struct {
-	beego.Controller
-}
-
-func (c *BooksInLibraryContorller) listBooksInLibrary() {
-	id, _ := strconv.ParseInt(c.Ctx.Input.Param(":libId"), 10, 64)
-	books, _ := model.GetBooks(id)
-	c.Data["json"] = &books
-    c.ServeJson()
-}
-
-func (c *BooksInLibraryContorller) addBookInLibrary() {
-	//var datapoint Datapoint
-	//book = json.Unmarshal(c.Ctx.Input.RequestBody, &datapoint)
-	//res, err := model.AddBook(c.Ctx.Input.RequestBody)
-	//prepareJson(c *BooksInLibraryContorller, res, err)
 }
 
 type BooksController struct {
@@ -118,23 +90,90 @@ type LibraryController struct {
 	beego.Controller
 }
 
+func (c *LibraryController) URLMapping() {
+    c.Mapping("addLibrary", c.addLibrary)
+    c.Mapping("showAllLibraries", c.showAllLibraries)
+    c.Mapping("showLibrary", c.showLibrary)
+    c.Mapping("updateLibrary", c.updateLibrary)
+    c.Mapping("deleteLibrary", c.deleteLibrary)
+    c.Mapping("listBooksInLibrary", c.listBooksInLibrary)
+    c.Mapping("addBookInLibrary", c.addBookInLibrary)
+}
+
 func (c *LibraryController) addLibrary() {
-	
+	respByte, err := ioutil.ReadAll(c.Ctx.Request.Body)
+    if err != nil {
+		tracelog.Errorf(err, "main", "addBook", "Failed to read response data.")
+		c.Abort("500")
+		return
+	}
+	res := model.AddLibrary(respByte)
+	if (!res) {
+		c.Abort("500")
+	}
+	c.Data["json"] = &res
+    c.ServeJson()
 }
 
 func (c *LibraryController) showAllLibraries() {
-	
+	res, _ := model.GetLibraries()
+	if (res == nil) {
+		c.Abort("404")
+	}
+	c.Data["json"] = &res
+    c.ServeJson()
 }
 
 func (c *LibraryController) showLibrary() {
-	
+	id, _ := strconv.ParseInt(c.Ctx.Input.Param(":bookId"), 10, 64)
+	res, _ := model.GetLibrary(id)
+	c.Data["json"] = &res
+    c.ServeJson()
 }
 
 func (c *LibraryController) updateLibrary() {
-	
+	respByte, err := ioutil.ReadAll(c.Ctx.Request.Body)
+    if err != nil {
+		tracelog.Errorf(err, "main", "updateBook", "Failed to read response data.")
+		c.Abort("500")
+		return
+	}
+	res := model.UpdateLibrary(respByte)
+	if (!res) {
+		c.Abort("500")
+	}
+	c.Data["json"] = &res
+    c.ServeJson()
 }
 
 func (c *LibraryController) deleteLibrary() {
-	
+	id, _ := strconv.ParseInt(c.Ctx.Input.Param(":bookId"), 10, 64)
+	res := model.DeleteLibrary(id)
+	if (!res) {
+		c.Abort("500")
+	}
+	c.Data["json"] = &res
+    c.ServeJson()
 }
-//func (c *BooksController) PrepareJson
+
+func (c *LibraryController) listBooksInLibrary() {
+	libId, _ := strconv.ParseInt(c.Ctx.Input.Param(":libId"), 10, 64)
+	books, err := model.GetBooksInLibrary(libId)
+	
+	if (err == orm.ErrNoRows) {
+		tracelog.Errorf(err, "main", "MainController", "No result found.")
+	}
+	c.Data["json"] = &books
+    c.ServeJson()
+}
+
+func (c *LibraryController) addBookInLibrary() {
+	libId, _ := strconv.ParseInt(c.Ctx.Input.Param(":libId"), 10, 64)
+	bookId, _ := strconv.ParseInt(c.Ctx.Input.Param(":bookId"), 10, 64)
+	res := model.AddBookInLibrary(libId, bookId)
+	if (!res) {
+		c.Abort("500")
+	}
+	c.Data["json"] = &res
+    c.ServeJson()
+}
