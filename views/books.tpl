@@ -18,7 +18,7 @@
 <script type="text/javascript" src="js/lib/angular.min.js"></script>
 <script type="text/javascript" src="js/lib/angular-ui-router.min.js"></script>
 <script type="text/javascript" src="js/lib/angular-resource.min.js"></script>
-<script type="text/javascript" src="js/lib/angular-sanitize.js"></script>
+<script type="text/javascript" src="js/lib/angular-sanitize.min.js"></script>
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/controllers.js"></script>
 <script type="text/javascript" src="js/services.js"></script>
