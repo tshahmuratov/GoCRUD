@@ -9,6 +9,7 @@ To run:
 * Edit conf/db/default.json for PostgreSQL auth params
 * Run go build
 * Run books
+* Open localhost:<port> in browser
 
 [Twitter Bootstrap]: <http://twitter.github.com/bootstrap/>
 [jQuery]: <http://jquery.com>
