@@ -42,6 +42,9 @@ func (c *BooksController) showAllBooks() {
 func (c *BooksController) showBook() {
 	id, _ := strconv.ParseInt(c.Ctx.Input.Param(":bookId"), 10, 64)
 	res, _ := model.GetBook(id)
+	if res == nil {
+		c.Abort("500")
+	}
 	c.Data["json"] = &res
 	c.ServeJson()
 }
@@ -49,7 +52,7 @@ func (c *BooksController) showBook() {
 func (c *BooksController) addBook() {
 	respByte, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
-		tracelog.Errorf(err, "main", "addBook", "Failed to read response data.")
+		tracelog.Error(err, "Failed to read response data", "addBook")
 		c.Abort("500")
 		return
 	}
@@ -64,7 +67,7 @@ func (c *BooksController) addBook() {
 func (c *BooksController) updateBook() {
 	respByte, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
-		tracelog.Errorf(err, "main", "updateBook", "Failed to read response data.")
+		tracelog.Error(err, "Failed to read response data", "updateBook")
 		c.Abort("500")
 		return
 	}
@@ -103,7 +106,7 @@ func (c *LibraryController) URLMapping() {
 func (c *LibraryController) addLibrary() {
 	respByte, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
-		tracelog.Errorf(err, "main", "addBook", "Failed to read response data.")
+		tracelog.Error(err, "Failed to read response data", "addBook")
 		c.Abort("500")
 		return
 	}
@@ -134,7 +137,7 @@ func (c *LibraryController) showLibrary() {
 func (c *LibraryController) updateLibrary() {
 	respByte, err := ioutil.ReadAll(c.Ctx.Request.Body)
 	if err != nil {
-		tracelog.Errorf(err, "main", "updateBook", "Failed to read response data.")
+		tracelog.Error(err, "Failed to read response data", "updateBook")
 		c.Abort("500")
 		return
 	}
@@ -161,7 +164,7 @@ func (c *LibraryController) listBooksInLibrary() {
 	books, err := model.GetBooksInLibrary(libId)
 
 	if err == orm.ErrNoRows {
-		tracelog.Errorf(err, "main", "MainController", "No result found.")
+		tracelog.Error(err, "No result found", "MainController")
 	}
 	c.Data["json"] = &books
 	c.ServeJson()

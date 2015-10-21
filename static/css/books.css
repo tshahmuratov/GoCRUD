@@ -1,11 +1,33 @@
 .hor-margin {
-	margin: 0 10px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 
-.force-width-80 {
-	width: 80% !important;
+.vert-margin {
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
-.align-center {
-	text-align: center;
-}
+ .input-mini { 
+	 width: 60px; 
+} 
+
+ .input-small { 
+	 width: 90px; 
+} 
+
+ .input-medium { 
+	 width: 150px; 
+} 
+
+ .input-large { 
+	 width: 210px; 
+} 
+
+ .input-xlarge { 
+	 width: 270px; 
+} 
+
+ .input-xxlarge { 
+	 width: 530px; 
+} 

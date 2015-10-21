@@ -43,7 +43,7 @@ func GetBooksInLibrary(libraryId int64) (*[]Book, error) {
 		join library s on con.library_id = s.id
 		WHERE s.id = ?`, libraryId).QueryRows(&rows)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.GetBooks", "Failed to getbooks")
+		tracelog.Error(err, "Failed to query", "model.GetBooksInLibrary")
 	}
 	return &rows, err
 }
@@ -53,7 +53,7 @@ func AddBookInLibrary(libraryId int64, bookId int64) bool {
 	_, err := o.Raw(`
 		INSERT INTO book_library(book_id, library_id) VALUES(?, ?)`, bookId, libraryId).Exec()
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.AddBookInLibrary", "Failed to insert book")
+		tracelog.Error(err, "Failed to query", "model.AddBookInLibrary")
 		return false
 	}
 	return true
@@ -66,7 +66,7 @@ func GetAllBooks() (*[]Book, error) {
 		SELECT b.id, b.name, b.author 
 		FROM book b`).QueryRows(&rows)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.GetBooks", "Failed to getbooks")
+		tracelog.Error(err, "Failed to query", "model.GetAllBooks")
 	}
 	return &rows, err
 }
@@ -75,15 +75,10 @@ func GetBook(bookId int64) (*Book, error) {
 	o := orm.NewOrm()
 	book := Book{Id: bookId}
 	err := o.Read(&book)
-
-	if err == orm.ErrNoRows {
-		return nil, err
-	} else if err == orm.ErrMissPK {
-		tracelog.Errorf(err, "main", "model.GetBook", "Failed to get book")
-		return nil, err
-	} else {
-		return &book, err
+	if err != nil {
+		tracelog.Error(err, "Failed to query", "model.GetBook")
 	}
+	return &book, err
 }
 
 func AddBook(jsonStr []byte) bool {
@@ -91,12 +86,12 @@ func AddBook(jsonStr []byte) bool {
 	var book Book
 	err := json.Unmarshal(jsonStr, &book)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert json")
+		tracelog.Error(err, "Failed to insert json", "model.AddBook")
 		return false
 	}
 	_, err = o.Insert(&book)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert book")
+		tracelog.Error(err, "Failed to insert book", "model.AddBook")
 		return false
 	}
 	return true
@@ -107,12 +102,12 @@ func UpdateBook(jsonStr []byte) bool {
 	var book Book
 	err := json.Unmarshal(jsonStr, &book)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to parse json")
+		tracelog.Error(err, "Failed to parse json", "model.UpdateBook")
 		return false
 	}
 	_, err = o.Update(&book)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to update book")
+		tracelog.Error(err, "Failed to update book", "model.UpdateBook")
 		return false
 	}
 	return true
@@ -121,7 +116,7 @@ func UpdateBook(jsonStr []byte) bool {
 func DeleteBook(bookId int64) bool {
 	o := orm.NewOrm()
 	if _, err := o.Delete(&Book{Id: bookId}); err == nil {
-		tracelog.Errorf(err, "main", "model.DeleteBook", "Failed to delete book")
+		tracelog.Error(err, "Failed to query", "model.DeleteBook")
 		return false
 	}
 	return true
@@ -135,7 +130,7 @@ func GetLibraries() (*[]Library, error) {
 		SELECT id, name 
 		FROM library`).QueryRows(&rows)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.GetBooks", "Failed to getbooks")
+		tracelog.Error(err, "Failed to GetLibraries", "model.GetLibraries")
 	}
 	return &rows, err
 }
@@ -148,7 +143,7 @@ func GetLibrary(libId int64) (*Library, error) {
 	if err == orm.ErrNoRows {
 		return nil, err
 	} else if err == orm.ErrMissPK {
-		tracelog.Errorf(err, "main", "model.GetBook", "Failed to get book")
+		tracelog.Error(err, "Failed to GetLibrary", "model.GetLibrary")
 		return nil, err
 	} else {
 		return &lib, err
@@ -160,12 +155,12 @@ func AddLibrary(jsonStr []byte) bool {
 	var lib Library
 	err := json.Unmarshal(jsonStr, &lib)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert json")
+		tracelog.Error(err, "Failed to insert json", "model.AddLibrary")
 		return false
 	}
 	_, err = o.Insert(&lib)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.AddBook", "Failed to insert book")
+		tracelog.Error(err, "Failed to insert lib", "model.AddLibrary")
 		return false
 	}
 	return true
@@ -176,12 +171,12 @@ func UpdateLibrary(jsonStr []byte) bool {
 	var lib Library
 	err := json.Unmarshal(jsonStr, &lib)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to parse json")
+		tracelog.Error(err, "Failed to parse json", "model.UpdateLibrary")
 		return false
 	}
 	_, err = o.Update(&lib)
 	if err != nil {
-		tracelog.Errorf(err, "main", "model.UpdateBook", "Failed to update book")
+		tracelog.Error(err, "Failed to update lib", "model.UpdateLibrary")
 		return false
 	}
 	return true
@@ -190,7 +185,7 @@ func UpdateLibrary(jsonStr []byte) bool {
 func DeleteLibrary(libId int64) bool {
 	o := orm.NewOrm()
 	if _, err := o.Delete(&Library{Id: libId}); err == nil {
-		tracelog.Errorf(err, "main", "model.DeleteBook", "Failed to delete book")
+		tracelog.Error(err, "Failed to delete lib", "model.DeleteLibrary")
 		return false
 	}
 	return true

@@ -205,7 +205,3 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 --
 -- PostgreSQL database dump complete
 --
-
-insert into book(id, name, author) values (1,'Book1','Author1'), (2,'Book2','Author2');
-insert into library(id, name) values (1, 'Library1');
-insert into book_library(book_id, library_id) values(1,1), (2,1);

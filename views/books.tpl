@@ -8,9 +8,7 @@
 <body>
 <div class="container">
 	<div class="row top-buffer">
-		<div class="col-xs-8 col-xs-offset-2">
-			<div ui-view></div>
-		</div>
+		<div ui-view></div>
 	</div>
 </div>
 <script type="text/javascript" src="js/lib/jquery-1.11.3.min.js"></script>

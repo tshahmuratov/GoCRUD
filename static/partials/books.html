@@ -1,10 +1,12 @@
 <h3 class='text-center'>Мои библиотеки</h3>
-<div class="row"  ng-controller="SelectLibraryController">
+<div class="row vert-margin"  ng-controller="SelectLibraryController">
 	<div class="col-md-4"></div>
 	<div class="col-md-4 text-center">
-<select class="selectpicker hor-margin align-center" 
+<select class="selectpicker hor-margin input-large" 
 	ng-model="library.id" ng-options="library.Name for library in libraries"
-	ng-change="viewLibrary(library, '{{library.id}}')"></select>
+	ng-change="viewLibrary(library, '{{library.id}}')">
+	<option value="">--Выберите библиотеку--</option>
+	</select>
 	<button type="button" ui-sref="newLibrary" class="btn btn-success hor-margin">
 					<span class="glyphicon glyphicon-plus"></span>
 					Добавить библиотеку
@@ -12,12 +14,13 @@
 	</div>
 	<div class="col-md-4"></div>
 </div>
-<table class="table table-striped table-hover force-width-80"  align="center" width="80%" >
+<table class="table table-striped table-hover"  align="center" >
 	<thead>
 		<tr>
 			<th>Id</th>
 			<th>Название</th>
 			<th>Автор</th>
+			<th></th>
 			<th></th>
 		</tr>
 	</thead>
@@ -29,16 +32,18 @@
             <td>
                 <button type="button" ui-sref="editBook({id:book.Id})" class="btn btn-warning hor-margin">
 					<span class="glyphicon glyphicon-pencil"></span>
-					Редактировать параметры книги
+					
 				</button>
-                <button type="button" ui-sref="deleteBook({id:book.Id})" class="btn btn-danger hor-margin">
+            </td>
+            <td>
+                 <button type="button" ui-sref="deleteBook({id:book.Id})" class="btn btn-danger hor-margin">
 					<span class=" glyphicon glyphicon-remove"></span>
-					Удалить книгу
+					
 				</button>
             </td>
         </tr>
 		<tr>
-			<td colspan=3 class=' text-center'>
+			<td colspan=5 class=' text-center'>
 				<button type="button" ui-sref="books({libId: 1})" class="btn btn-success text-center">
 					<span class="glyphicon glyphicon-plus"></span>
 					Добавить книгу в библиотеку
