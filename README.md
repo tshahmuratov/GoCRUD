@@ -1,5 +1,7 @@
 # gocrud 
+
 Simple CRUD go web application based on [Beego], [AngularJS], [jQuery], [Twitter Bootstrap] and [PostgreSQL]
+
 To run:
 * create database books
 * Load sql dump from sql/books.sql
